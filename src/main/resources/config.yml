@@ -7,7 +7,7 @@ settings:
   stats: true
 
   # Knockbackinator's usage permission.
-  # Use [] to disable this feature.
+  # Use "" to disable this feature.
   usage_permission: "knockbinator.get"
 
   # Knockbackinator's reload permission.

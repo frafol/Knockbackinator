@@ -10,6 +10,6 @@ messages:
   reloaded: "%prefix% &7Configuration reloaded &dsuccessfully&7."
 
   # Message that appears when the player picks up the Knockbackinator.
-  # Leave [] to disable this feature.
+  # Leave "none" to disable this feature.
   taken: "%prefix% &7You are now using the &dknockbackinator&7."
 
