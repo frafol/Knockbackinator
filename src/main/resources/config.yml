@@ -1,0 +1,46 @@
+# Configuration file. Made with ❤ by frafol.
+# For support: discord.io/futuredevelopment
+
+settings:
+
+  update_check: true
+  stats: true
+
+  # Knockbackinator's usage permission.
+  # Use [] to disable this feature.
+  usage_permission: "knockbinator.get"
+
+  # Knockbackinator's reload permission.
+  reload_permission: "knockbinator.reload"
+
+  # Activate this if you want pvp to be possible only with the Knockbackinator.
+  prevent_other_item_pvp: true
+
+  # Activate it if you want the player not to take damage with the Knockbackinator.
+  prevent_taking_damage: true
+
+  # Knockbackinator's knockback settings.
+  knockback:
+
+    # Delay of any hit in milliseconds.
+    hit_delay: 1
+
+    # Here you can change the stick knockback.
+    x_increment: "0"
+    y_increment: "0.2"
+    z_increment: "0"
+
+  # Item settings.
+  item:
+
+    # Sets the Knockbackinator slot.
+    slot: 4
+
+    # Sets the Knockbackinator name.
+    name: "&cKnockbackinator"
+
+    # Some settings.
+    prevent_break: true
+    prevent_drop: true
+    prevent_move: true
+

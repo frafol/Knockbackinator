@@ -1,0 +1,15 @@
+# Messages. Made with ❤ by frafol.
+# For support: discord.io/futuredevelopment
+
+messages:
+
+  prefix: "&d&lKNOCKBACKINATOR &7»"
+
+  usage: "%prefix% &7Use: &d/knockbackinator reload&7."
+  no_permission: "%prefix% &7You do not have the &dpermission &7to do this."
+  reloaded: "%prefix% &7Configuration reloaded &dsuccessfully&7."
+
+  # Message that appears when the player picks up the Knockbackinator.
+  # Leave [] to disable this feature.
+  taken: "%prefix% &7You are now using the &dknockbackinator&7."
+

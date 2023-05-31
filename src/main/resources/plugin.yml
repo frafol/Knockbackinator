@@ -1,0 +1,7 @@
+name: Knockbackinator
+version: '${project.version}'
+main: it.frafol.knockbackinator.Knockbackinator
+authors: [ frafol ]
+api-version: 1.13
+folia-supported: true
+description: "Knockbackinator plugin."
