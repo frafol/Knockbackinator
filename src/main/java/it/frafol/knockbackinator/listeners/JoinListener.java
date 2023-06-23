@@ -1,6 +1,7 @@
 package it.frafol.knockbackinator.listeners;
 
 import it.frafol.knockbackinator.Knockbackinator;
+import it.frafol.knockbackinator.enums.SpigotConfig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,10 @@ public class JoinListener implements Listener {
 
         final Player player = event.getPlayer();
         Knockbackinator.getInstance().startupPlayer(player);
+
+        if (player.hasPermission(SpigotConfig.RELOAD_PERMISSION.get(String.class))) {
+            Knockbackinator.getInstance().UpdateChecker(player);
+        }
 
     }
 }

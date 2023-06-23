@@ -12,6 +12,7 @@ public enum SpigotConfig {
     MOVE("settings.item.prevent_move"),
     BREAK("settings.item.prevent_break"),
     UPDATE_CHECK("settings.update_check"),
+    AUTO_UPDATE("settings.auto_update"),
     PREVENT_PVP("settings.prevent_other_item_pvp"),
     PREVENT_DAMAGE("settings.prevent_taking_damage"),
     HIT_DELAY("settings.knockback.hit_delay"),

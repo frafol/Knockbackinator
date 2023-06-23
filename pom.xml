@@ -6,7 +6,7 @@
 
     <groupId>it.frafol</groupId>
     <artifactId>knockbackinator</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>Knockbackinator</name>
@@ -18,6 +18,7 @@
     </properties>
 
     <build>
+        <finalName>Knockbackinator</finalName>
         <defaultGoal>clean install</defaultGoal>
         <plugins>
             <plugin>
@@ -91,7 +92,12 @@
         <dependency>
             <groupId>net.byteflux</groupId>
             <artifactId>libby-bukkit</artifactId>
-            <version>1.1.5</version>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tchristofferson</groupId>
+            <artifactId>ConfigUpdater</artifactId>
+            <version>2.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

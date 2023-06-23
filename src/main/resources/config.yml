@@ -4,6 +4,7 @@
 settings:
 
   update_check: true
+  auto_update: true
   stats: true
 
   # Knockbackinator's usage permission.
