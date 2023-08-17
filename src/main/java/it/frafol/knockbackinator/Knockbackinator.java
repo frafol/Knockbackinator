@@ -105,7 +105,6 @@ public class Knockbackinator extends JavaPlugin {
 		File messagesFile = new File(getDataFolder(), "messages.yml");
 
 		if (!getDescription().getVersion().equals(SpigotVersion.VERSION.get(String.class))) {
-
 			getLogger().info("Creating new configurations...");
 			try {
 				ConfigUpdater.update(this, "config.yml", configFile, Collections.emptyList());
@@ -120,7 +119,6 @@ public class Knockbackinator extends JavaPlugin {
 			configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
 			messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
 			versionTextFile = new TextFile(getDataFolder().toPath(), "version.yml");
-
 		}
 
 		getLogger().info("Loading commands...");
@@ -138,29 +136,20 @@ public class Knockbackinator extends JavaPlugin {
 		getServer().getScheduler().runTaskTimer(this, new GeneralTask(), 20L, 20L);
 
 		if (SpigotConfig.STATS.get(Boolean.class)) {
-
 			new Metrics(this, 18641);
-
 			getLogger().info("Metrics loaded successfully!");
-
 		}
 
-		if (!isFolia()) {
-			if (SpigotConfig.UPDATE_CHECK.get(Boolean.class)) {
-				UpdateChecker();
-			}
-		} else {
-			getLogger().severe("Folia does not support the update checker.");
+		if (SpigotConfig.UPDATE_CHECK.get(Boolean.class)) {
+			UpdateChecker();
 		}
 
 		loadItemStick();
 
 		if (getServer().getOnlinePlayers().size() > 0) {
-
 			for (Player players : getServer().getOnlinePlayers()) {
 				startupPlayer(players);
 			}
-
 		}
 
 		getLogger().info("Plugin successfully loaded!");
@@ -184,13 +173,11 @@ public class Knockbackinator extends JavaPlugin {
 	public void startupPlayer(Player player) {
 
 		PlayerCache.getDelays().put(player, player.getMaximumNoDamageTicks());
-
 		if (SpigotConfig.PERMISSION.get(String.class) != null && !player.hasPermission(SpigotConfig.PERMISSION.get(String.class))) {
 			return;
 		}
 
 		player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick());
-
 	}
 
 	public ItemStack getStick() {
@@ -220,10 +207,8 @@ public class Knockbackinator extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-
 		getLogger().info("Clearing instances...");
 		instance = null;
-
 		getLogger().info("Plugin successfully disabled!");
 	}
 
@@ -234,7 +219,6 @@ public class Knockbackinator extends JavaPlugin {
 		}
 
 		new UpdateCheck(this).getVersion(version -> {
-
 			if (Integer.parseInt(getDescription().getVersion().replace(".", "")) < Integer.parseInt(version.replace(".", ""))) {
 
 				if (SpigotConfig.AUTO_UPDATE.get(Boolean.class) && !updated) {

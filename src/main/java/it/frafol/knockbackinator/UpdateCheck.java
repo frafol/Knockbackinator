@@ -1,11 +1,10 @@
 package it.frafol.knockbackinator;
 
-import org.bukkit.Bukkit;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class UpdateCheck {
@@ -17,7 +16,7 @@ public class UpdateCheck {
     }
 
     public void getVersion(final Consumer<String> consumer) {
-        Bukkit.getScheduler().runTaskAsynchronously(PLUGIN, () -> {
+        CompletableFuture.runAsync(() -> {
             try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=110166")
                     .openStream(); Scanner scanner = new Scanner(inputStream)) {
                 if (scanner.hasNext()) {
