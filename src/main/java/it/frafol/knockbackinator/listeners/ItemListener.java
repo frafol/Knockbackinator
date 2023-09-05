@@ -17,14 +17,12 @@ public class ItemListener implements Listener {
     @EventHandler
     public void onItemSwitch(PlayerItemHeldEvent event) {
 
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
 
         if (player.getInventory().getItem(event.getNewSlot()) == null ) {
-
             if (player.getMaximumNoDamageTicks() != PlayerCache.getDelays().get(player)) {
                 player.setMaximumNoDamageTicks(PlayerCache.getDelays().get(player));
             }
-
             return;
         }
 
@@ -67,6 +65,5 @@ public class ItemListener implements Listener {
         if (event.getCurrentItem().getItemMeta().toString().equals(Knockbackinator.getInstance().getStick().getItemMeta().toString())) {
             event.setCancelled(true);
         }
-
     }
 }

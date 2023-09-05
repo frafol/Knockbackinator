@@ -27,6 +27,5 @@ public class DropListener implements Listener {
         if (SpigotConfig.DROP.get(Boolean.class)) {
             event.setCancelled(true);
         }
-
     }
 }

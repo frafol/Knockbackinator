@@ -12,6 +12,8 @@ import java.util.Objects;
 
 public class HitListener implements Listener {
 
+    private Knockbackinator instance = Knockbackinator.getInstance();
+
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 
@@ -23,39 +25,33 @@ public class HitListener implements Listener {
             return;
         }
 
-        final Player damager = (Player) event.getDamager();
-        final Player damaged = (Player) event.getEntity();
+        Player damager = (Player) event.getDamager();
+        Player damaged = (Player) event.getEntity();
 
         if (PlayerCache.getDelays().get(damaged) == null || PlayerCache.getDelays().get(damager) == null) {
-            Knockbackinator.getInstance().getLogger().severe("A player tried to do something when the plugin is still loading.");
+            instance.getLogger().severe("A player tried to do something when the plugin is still loading.");
             event.setCancelled(true);
             return;
         }
 
         if (damager.getItemInHand().getItemMeta() == null || damaged.getItemInHand().getItemMeta() == null) {
-
             if (SpigotConfig.PREVENT_PVP.get(Boolean.class)) {
                 event.setCancelled(true);
             }
-
             return;
         }
 
-        if (!Objects.equals(damager.getItemInHand().getItemMeta().toString(), Knockbackinator.getInstance().getStick().getItemMeta().toString())) {
-
+        if (!Objects.equals(damager.getItemInHand().getItemMeta().toString(), instance.getStick().getItemMeta().toString())) {
             if (SpigotConfig.PREVENT_PVP.get(Boolean.class)) {
                 event.setCancelled(true);
             }
-
             return;
         }
 
-        if (!Objects.equals(damaged.getItemInHand().getItemMeta().toString(), Knockbackinator.getInstance().getStick().getItemMeta().toString())) {
-
+        if (!Objects.equals(damaged.getItemInHand().getItemMeta().toString(), instance.getStick().getItemMeta().toString())) {
             if (SpigotConfig.PREVENT_PVP.get(Boolean.class)) {
                 event.setCancelled(true);
             }
-
             return;
         }
 
@@ -72,6 +68,5 @@ public class HitListener implements Listener {
                 .setZ(Double.parseDouble(SpigotConfig.Z.get(String.class))));
 
         PlayerCache.getFall_time().put(damaged, 10);
-
     }
 }

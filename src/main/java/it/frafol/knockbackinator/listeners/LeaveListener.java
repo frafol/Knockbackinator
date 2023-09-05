@@ -10,11 +10,8 @@ public class LeaveListener implements Listener {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
-
-        final Player player = event.getPlayer();
-
+        Player player = event.getPlayer();
         PlayerCache.getDelays().remove(player);
         PlayerCache.getFall_time().remove(player);
-
     }
 }

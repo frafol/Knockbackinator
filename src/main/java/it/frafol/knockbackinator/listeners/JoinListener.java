@@ -12,12 +12,11 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
 
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         Knockbackinator.getInstance().startupPlayer(player);
 
         if (player.hasPermission(SpigotConfig.RELOAD_PERMISSION.get(String.class))) {
             Knockbackinator.getInstance().UpdateChecker(player);
         }
-
     }
 }

@@ -7,6 +7,9 @@ settings:
   auto_update: true
   stats: true
 
+  # Removes some credit messages, if you want to support the developer, please leave this to false.
+  credit_less: false
+
   # Knockbackinator's usage permission.
   # Use "" to disable this feature.
   usage_permission: "knockbinator.get"
@@ -31,17 +34,23 @@ settings:
     y_increment: "0.2"
     z_increment: "0"
 
-  # Item settings.
+  # Knockbackinator's item settings.
   item:
 
-    # Sets the Knockbackinator slot.
+    # Sets the give delay (in ticks).
+    # Can be useful if in your server there is a plugin that clears the inventory on join.
+    # Do not set it to 0 or less.
+    delay: 5
+
+    # Sets the Knockbackinator's item slot.
     slot: 4
 
-    # Sets the Knockbackinator name.
+    # Sets the Knockbackinator's item name.
     name: "&cKnockbackinator"
 
-    # Some settings.
+    # Some other settings about the Knockbackinator's item.
     prevent_break: true
     prevent_drop: true
     prevent_move: true
 
+# Enjoy!

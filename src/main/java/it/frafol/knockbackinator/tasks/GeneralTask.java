@@ -25,7 +25,6 @@ public class GeneralTask implements Runnable {
             }
 
             PlayerCache.getFall_time().put(players, PlayerCache.getFall_time().get(players) - 1);
-
         }
     }
 }

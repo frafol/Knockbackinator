@@ -8,6 +8,7 @@ import it.frafol.knockbackinator.listeners.*;
 import it.frafol.knockbackinator.objects.PlayerCache;
 import it.frafol.knockbackinator.objects.TextFile;
 import it.frafol.knockbackinator.tasks.GeneralTask;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
@@ -35,13 +36,14 @@ public class Knockbackinator extends JavaPlugin {
 	private TextFile configTextFile;
 	private TextFile messagesTextFile;
 	private TextFile versionTextFile;
-	public static Knockbackinator instance;
-	private final ItemStack stick = new ItemStack(Material.STICK);
+
 	private boolean updated = false;
 
-	public static Knockbackinator getInstance() {
-		return instance;
-	}
+	@Getter
+	public static Knockbackinator instance;
+
+	@Getter
+	private final ItemStack stick = new ItemStack(Material.STICK);
 
 	@SneakyThrows
 	@Override
@@ -87,8 +89,9 @@ public class Knockbackinator extends JavaPlugin {
 			return;
 		}
 
-		if (!Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_7_R")
-				&& !Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_8_R")) {
+		if (!getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_7_R")
+				&& !getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_8_R")
+				&& !getServer().getPluginManager().isPluginEnabled("OldCombatMechanics")) {
 			getLogger().warning("Your server version may not support the pvp maccanics of 1.8. " +
 					"To solve this, install a plugin to fix the pvp cooldown like OldCombatMechanics.");
 		}
@@ -109,9 +112,8 @@ public class Knockbackinator extends JavaPlugin {
 			try {
 				ConfigUpdater.update(this, "config.yml", configFile, Collections.emptyList());
 				ConfigUpdater.update(this, "messages.yml", messagesFile, Collections.emptyList());
-			} catch (IOException exception) {
-				getLogger().severe("Unable to update configuration file, see the error below:");
-				exception.printStackTrace();
+			} catch (IOException ignored) {
+				getLogger().severe("Unable to update configuration files.");
 			}
 
 			versionTextFile.getConfig().set("version", getDescription().getVersion());
@@ -146,7 +148,7 @@ public class Knockbackinator extends JavaPlugin {
 
 		loadItemStick();
 
-		if (getServer().getOnlinePlayers().size() > 0) {
+		if (!getServer().getOnlinePlayers().isEmpty()) {
 			for (Player players : getServer().getOnlinePlayers()) {
 				startupPlayer(players);
 			}
@@ -177,11 +179,7 @@ public class Knockbackinator extends JavaPlugin {
 			return;
 		}
 
-		player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick());
-	}
-
-	public ItemStack getStick() {
-		return stick;
+		instance.getServer().getScheduler().runTaskLater(instance, () -> player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick()), SpigotConfig.DELAY.get(Long.class));
 	}
 
 	public static boolean isFolia() {
@@ -270,10 +268,10 @@ public class Knockbackinator extends JavaPlugin {
 
 			downloadFile(fileUrl, outputFile);
 			updated = true;
-			getLogger().warning("CleanScreenShare successfully updated, a restart is required.");
+			getLogger().warning("Knockbackinator successfully updated, a restart is required.");
 
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ignored) {
+			getLogger().severe("Unable to update the Knockbackinator plugin, update it manually.");
 		}
 	}
 

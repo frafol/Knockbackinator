@@ -6,11 +6,13 @@ public enum SpigotConfig {
 
     PERMISSION("settings.usage_permission"),
     RELOAD_PERMISSION("settings.reload_permission"),
+    CREDIT_LESS("settings.credit_less"),
     SLOT("settings.item.slot"),
     ITEM_NAME("settings.item.name"),
     DROP("settings.item.prevent_drop"),
     MOVE("settings.item.prevent_move"),
     BREAK("settings.item.prevent_break"),
+    DELAY("settings.item.delay"),
     UPDATE_CHECK("settings.update_check"),
     AUTO_UPDATE("settings.auto_update"),
     PREVENT_PVP("settings.prevent_other_item_pvp"),

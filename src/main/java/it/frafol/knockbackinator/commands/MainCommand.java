@@ -30,8 +30,12 @@ public class MainCommand implements Listener {
                 return;
             }
 
-            player.sendMessage("§7This server is using §dKnockbackinator §7by §dfrafol§7.");
+            if (SpigotConfig.CREDIT_LESS.get(Boolean.class)) {
+                player.sendMessage(SpigotMessages.NO_PERMISSION.color().replace("%prefix%", SpigotMessages.PREFIX.color()));
+                return;
+            }
 
+            player.sendMessage("§7This server is using §dKnockbackinator §7by §dfrafol§7.");
         }
 
         if (command.equals("/knockbackinator reload")) {
@@ -44,10 +48,12 @@ public class MainCommand implements Listener {
                 return;
             }
 
-            player.sendMessage(SpigotMessages.NO_PERMISSION.color().replace("%prefix%", SpigotMessages.PREFIX.color()));
+            if (SpigotConfig.CREDIT_LESS.get(Boolean.class)) {
+                player.sendMessage(SpigotMessages.NO_PERMISSION.color().replace("%prefix%", SpigotMessages.PREFIX.color()));
+                return;
+            }
 
+            player.sendMessage("§7This server is using §dKnockbackinator §7by §dfrafol§7.");
         }
-
     }
-
 }

@@ -26,6 +26,5 @@ public class FallListener implements Listener {
         }
 
         event.setCancelled(true);
-
     }
 }
