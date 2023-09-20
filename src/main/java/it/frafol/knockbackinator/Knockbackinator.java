@@ -179,7 +179,7 @@ public class Knockbackinator extends JavaPlugin {
 			return;
 		}
 
-		instance.getServer().getScheduler().runTaskLater(instance, () -> player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick()), SpigotConfig.DELAY.get(Long.class));
+		instance.getServer().getScheduler().runTaskLater(instance, () -> player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick()), (long) SpigotConfig.DELAY.get(Integer.class));
 	}
 
 	public static boolean isFolia() {
