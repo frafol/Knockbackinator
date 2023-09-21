@@ -8,6 +8,7 @@ import it.frafol.knockbackinator.listeners.*;
 import it.frafol.knockbackinator.objects.PlayerCache;
 import it.frafol.knockbackinator.objects.StickItem;
 import it.frafol.knockbackinator.objects.TextFile;
+import it.frafol.knockbackinator.tasks.FoliaTask;
 import it.frafol.knockbackinator.tasks.GeneralTask;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -26,6 +27,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Knockbackinator extends JavaPlugin {
 
@@ -64,7 +68,11 @@ public class Knockbackinator extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new LeaveListener(), this);
 
 		getLogger().info("Loading tasks...");
-		getServer().getScheduler().runTaskTimer(this, new GeneralTask(), 20L, 20L);
+		if (!isFolia()) {
+			getServer().getScheduler().runTaskTimer(this, new GeneralTask(), 20L, 20L);
+		} else {
+			FoliaTask.startTask();
+		}
 
 		if (SpigotConfig.STATS.get(Boolean.class)) {
 			new Metrics(this, 18641);
@@ -179,7 +187,23 @@ public class Knockbackinator extends JavaPlugin {
 			}
 		}
 
+		if (isFolia()) {
+			runFoliaStartupTask(player);
+			return;
+		}
+
 		instance.getServer().getScheduler().runTaskLater(instance, () -> player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick()), (long) SpigotConfig.DELAY.get(Integer.class));
+	}
+
+	private void runFoliaStartupTask(Player player) {
+		ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+		Runnable myTask = () -> {
+			player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick());
+			scheduler.shutdown();
+		};
+
+		scheduler.schedule(myTask, Math.floorDiv(SpigotConfig.DELAY.get(Integer.class), 20), TimeUnit.SECONDS);
 	}
 
 	public static boolean isFolia() {
@@ -205,6 +229,11 @@ public class Knockbackinator extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+
+		if (isFolia()) {
+			FoliaTask.stopTask();
+		}
+
 		getLogger().info("Clearing instances...");
 		instance = null;
 		getLogger().info("Plugin successfully disabled!");
