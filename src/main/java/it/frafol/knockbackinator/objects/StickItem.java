@@ -19,14 +19,26 @@ public class StickItem {
     @Getter
     private final ItemStack stick = new ItemStack(Material.STICK);
 
+    @SuppressWarnings("deprecation")
     public void loadItemStick() {
 
         ItemMeta stickMeta = stick.getItemMeta();
+
+        if (stickMeta == null) {
+            return;
+        }
+
         stickMeta.setDisplayName(SpigotConfig.ITEM_NAME.color());
         stickMeta.setLore(getLore(SpigotConfig.LORE.getStringList()));
 
         if (SpigotConfig.BREAK.get(Boolean.class)) {
-            stickMeta.spigot().setUnbreakable(true);
+
+            try {
+                stickMeta.spigot().setUnbreakable(true);
+            } catch (NoSuchMethodError ignored) {
+                stickMeta.setUnbreakable(true);
+            }
+
             stickMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
             stickMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
