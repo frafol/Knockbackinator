@@ -6,6 +6,7 @@ import it.frafol.knockbackinator.enums.SpigotConfig;
 import it.frafol.knockbackinator.enums.SpigotVersion;
 import it.frafol.knockbackinator.listeners.*;
 import it.frafol.knockbackinator.objects.PlayerCache;
+import it.frafol.knockbackinator.objects.StickItem;
 import it.frafol.knockbackinator.objects.TextFile;
 import it.frafol.knockbackinator.tasks.GeneralTask;
 import lombok.Getter;
@@ -13,12 +14,8 @@ import lombok.SneakyThrows;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.simpleyaml.configuration.file.YamlFile;
 
@@ -29,7 +26,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
-import java.util.Objects;
 
 public class Knockbackinator extends JavaPlugin {
 
@@ -43,85 +39,18 @@ public class Knockbackinator extends JavaPlugin {
 	public static Knockbackinator instance;
 
 	@Getter
-	private final ItemStack stick = new ItemStack(Material.STICK);
+	private final ItemStack stick = StickItem.getStick();
 
-	@SneakyThrows
 	@Override
 	public void onEnable() {
 
 		instance = this;
 
-		BukkitLibraryManager bukkitLibraryManager = new BukkitLibraryManager(this);
+		loadDependencies();
+		checkSupportedVersion();
 
-		Library yaml = Library.builder()
-				.groupId("me{}carleslc{}Simple-YAML")
-				.artifactId("Simple-Yaml")
-				.version("1.8.4")
-				.build();
-
-		bukkitLibraryManager.addJitPack();
-
-		try {
-			bukkitLibraryManager.loadLibrary(yaml);
-		} catch (RuntimeException ignored) {
-			getLogger().severe("Failed to load Simple-YAML library. Trying to download it from GitHub...");
-			yaml = Library.builder()
-					.groupId("me{}carleslc{}Simple-YAML")
-					.artifactId("Simple-Yaml")
-					.version("1.8.4")
-					.url("https://github.com/Carleslc/Simple-YAML/releases/download/1.8.4/Simple-Yaml-1.8.4.jar")
-					.build();
-		}
-
-		bukkitLibraryManager.loadLibrary(yaml);
-
-		getLogger().info("Server version: " + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + ".");
-
-		if (Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_6_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_5_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_4_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_3_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_2_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_1_R")
-				|| Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_0_R")) {
-			getLogger().severe("Support for your version was declined.");
-			Bukkit.getPluginManager().disablePlugin(this);
-			return;
-		}
-
-		if (!getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_7_R")
-				&& !getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_8_R")
-				&& !getServer().getPluginManager().isPluginEnabled("OldCombatMechanics")) {
-			getLogger().warning("Your server version may not support the pvp maccanics of 1.8. " +
-					"To solve this, install a plugin to fix the pvp cooldown like OldCombatMechanics.");
-		}
-
-		if (isFolia()) {
-			getLogger().warning("Support for Folia has not been tested and is only for experimental purposes.");
-		}
-
-		getLogger().info("Loading configuration...");
-		configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
-		messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
-		versionTextFile = new TextFile(getDataFolder().toPath(), "version.yml");
-		File configFile = new File(getDataFolder(), "config.yml");
-		File messagesFile = new File(getDataFolder(), "messages.yml");
-
-		if (!getDescription().getVersion().equals(SpigotVersion.VERSION.get(String.class))) {
-			getLogger().info("Creating new configurations...");
-			try {
-				ConfigUpdater.update(this, "config.yml", configFile, Collections.emptyList());
-				ConfigUpdater.update(this, "messages.yml", messagesFile, Collections.emptyList());
-			} catch (IOException ignored) {
-				getLogger().severe("Unable to update configuration files.");
-			}
-
-			versionTextFile.getConfig().set("version", getDescription().getVersion());
-			versionTextFile.getConfig().save();
-			configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
-			messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
-			versionTextFile = new TextFile(getDataFolder().toPath(), "version.yml");
-		}
+		loadConfigurations();
+		updateConfiguration();
 
 		getLogger().info("Loading commands...");
 		getServer().getPluginManager().registerEvents(new MainCommand(), this);
@@ -146,7 +75,7 @@ public class Knockbackinator extends JavaPlugin {
 			UpdateChecker();
 		}
 
-		loadItemStick();
+		StickItem.loadItemStick();
 
 		if (!getServer().getOnlinePlayers().isEmpty()) {
 			for (Player players : getServer().getOnlinePlayers()) {
@@ -157,19 +86,84 @@ public class Knockbackinator extends JavaPlugin {
 		getLogger().info("Plugin successfully loaded!");
 	}
 
-	private void loadItemStick() {
+	private void loadDependencies() {
+		BukkitLibraryManager bukkitLibraryManager = new BukkitLibraryManager(this);
 
-		ItemMeta stickMeta = stick.getItemMeta();
-		Objects.requireNonNull(stickMeta).setDisplayName(SpigotConfig.ITEM_NAME.color());
+		Library yaml = Library.builder()
+				.groupId("me{}carleslc{}Simple-YAML")
+				.artifactId("Simple-Yaml")
+				.version("1.8.4")
+				.build();
 
-		if (SpigotConfig.BREAK.get(Boolean.class)) {
-			stickMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-			stickMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-			stickMeta.addEnchant(Enchantment.DURABILITY, 32767, true);
+		bukkitLibraryManager.addJitPack();
+
+		try {
+			bukkitLibraryManager.loadLibrary(yaml);
+		} catch (RuntimeException ignored) {
+			getLogger().severe("Failed to load Simple-YAML library. Trying to download it from GitHub...");
+			yaml = Library.builder()
+					.groupId("me{}carleslc{}Simple-YAML")
+					.artifactId("Simple-Yaml")
+					.version("1.8.4")
+					.url("https://github.com/Carleslc/Simple-YAML/releases/download/1.8.4/Simple-Yaml-1.8.4.jar")
+					.build();
 		}
 
-		stick.setItemMeta(stickMeta);
+		bukkitLibraryManager.loadLibrary(yaml);
+	}
 
+	private void checkSupportedVersion() {
+		getLogger().info("Server version: " + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + ".");
+		if (getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_6_R")
+				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_5_R")
+				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_4_R")
+				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_3_R")
+				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_2_R")
+				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_1_R")
+				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_0_R")) {
+			getLogger().severe("Support for your version was declined.");
+			getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+
+		if (!getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_7_R")
+				&& !getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_8_R")
+				&& !getServer().getPluginManager().isPluginEnabled("OldCombatMechanics")) {
+			getLogger().warning("Your server version may not support the pvp maccanics of 1.8. " +
+					"To solve this, install a plugin to fix the pvp cooldown like OldCombatMechanics.");
+		}
+
+		if (isFolia()) {
+			getLogger().warning("Support for Folia has not been tested and is only for experimental purposes.");
+		}
+	}
+
+	private void loadConfigurations() {
+		getLogger().info("Loading configuration...");
+		configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
+		messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
+		versionTextFile = new TextFile(getDataFolder().toPath(), "version.yml");
+	}
+
+	@SneakyThrows
+	private void updateConfiguration() {
+		File configFile = new File(getDataFolder(), "config.yml");
+		File messagesFile = new File(getDataFolder(), "messages.yml");
+		if (!getDescription().getVersion().equals(SpigotVersion.VERSION.get(String.class))) {
+			getLogger().info("Creating new configurations...");
+			try {
+				ConfigUpdater.update(this, "config.yml", configFile, Collections.emptyList());
+				ConfigUpdater.update(this, "messages.yml", messagesFile, Collections.emptyList());
+			} catch (IOException ignored) {
+				getLogger().severe("Unable to update configuration files.");
+			}
+
+			versionTextFile.getConfig().set("version", getDescription().getVersion());
+			versionTextFile.getConfig().save();
+			configTextFile = new TextFile(getDataFolder().toPath(), "config.yml");
+			messagesTextFile = new TextFile(getDataFolder().toPath(), "messages.yml");
+			versionTextFile = new TextFile(getDataFolder().toPath(), "version.yml");
+		}
 	}
 
 	public void startupPlayer(Player player) {
@@ -177,6 +171,12 @@ public class Knockbackinator extends JavaPlugin {
 		PlayerCache.getDelays().put(player, player.getMaximumNoDamageTicks());
 		if (SpigotConfig.PERMISSION.get(String.class) != null && !player.hasPermission(SpigotConfig.PERMISSION.get(String.class))) {
 			return;
+		}
+
+		for (ItemStack items : player.getInventory().getContents()) {
+			if (items != null && items.equals(stick)) {
+				items.setAmount(0);
+			}
 		}
 
 		instance.getServer().getScheduler().runTaskLater(instance, () -> player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick()), (long) SpigotConfig.DELAY.get(Integer.class));

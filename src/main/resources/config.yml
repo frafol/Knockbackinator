@@ -48,6 +48,12 @@ settings:
     # Sets the Knockbackinator's item name.
     name: "&cKnockbackinator"
 
+    # Sets the Knockbackinator's item lore.
+    lore:
+      - "&7Use this item to a"
+      - "&7player that you want to"
+      - "&7knockback &dup&7."
+
     # Some other settings about the Knockbackinator's item.
     prevent_break: true
     prevent_drop: true
