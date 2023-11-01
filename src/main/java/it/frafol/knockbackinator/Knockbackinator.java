@@ -1,5 +1,7 @@
 package it.frafol.knockbackinator;
 
+import com.github.Anon8281.universalScheduler.UniversalScheduler;
+import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import it.frafol.knockbackinator.commands.MainCommand;
 import it.frafol.knockbackinator.enums.SpigotConfig;
@@ -8,12 +10,12 @@ import it.frafol.knockbackinator.listeners.*;
 import it.frafol.knockbackinator.objects.PlayerCache;
 import it.frafol.knockbackinator.objects.StickItem;
 import it.frafol.knockbackinator.objects.TextFile;
-import it.frafol.knockbackinator.tasks.FoliaTask;
 import it.frafol.knockbackinator.tasks.GeneralTask;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
+import net.byteflux.libby.relocation.Relocation;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,11 +29,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Knockbackinator extends JavaPlugin {
+
+	private final TaskScheduler scheduler = UniversalScheduler.getScheduler(this);
 
 	private TextFile configTextFile;
 	private TextFile messagesTextFile;
@@ -68,11 +69,7 @@ public class Knockbackinator extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new LeaveListener(), this);
 
 		getLogger().info("Loading tasks...");
-		if (!isFolia()) {
-			getServer().getScheduler().runTaskTimer(this, new GeneralTask(), 20L, 20L);
-		} else {
-			FoliaTask.startTask();
-		}
+		scheduler.runTaskTimer(new GeneralTask(), 20L, 20L);
 
 		if (SpigotConfig.STATS.get(Boolean.class)) {
 			new Metrics(this, 18641);
@@ -95,29 +92,29 @@ public class Knockbackinator extends JavaPlugin {
 	}
 
 	private void loadDependencies() {
-		BukkitLibraryManager bukkitLibraryManager = new BukkitLibraryManager(this);
 
+		BukkitLibraryManager bukkitLibraryManager = new BukkitLibraryManager(this);
+		bukkitLibraryManager.addJitPack();
+
+		final Relocation yamlrelocation = new Relocation("yaml", "it{}frafol{}libs{}yaml");
 		Library yaml = Library.builder()
 				.groupId("me{}carleslc{}Simple-YAML")
 				.artifactId("Simple-Yaml")
 				.version("1.8.4")
+				.url("https://github.com/Carleslc/Simple-YAML/releases/download/1.8.4/Simple-Yaml-1.8.4.jar")
+				.relocate(yamlrelocation)
 				.build();
 
-		bukkitLibraryManager.addJitPack();
-
-		try {
-			bukkitLibraryManager.loadLibrary(yaml);
-		} catch (RuntimeException ignored) {
-			getLogger().severe("Failed to load Simple-YAML library. Trying to download it from GitHub...");
-			yaml = Library.builder()
-					.groupId("me{}carleslc{}Simple-YAML")
-					.artifactId("Simple-Yaml")
-					.version("1.8.4")
-					.url("https://github.com/Carleslc/Simple-YAML/releases/download/1.8.4/Simple-Yaml-1.8.4.jar")
-					.build();
-		}
+		final Relocation schedulerrelocation = new Relocation("scheduler", "it{}frafol{}libs{}scheduler");
+		Library scheduler = Library.builder()
+				.groupId("com{}github{}Anon8281")
+				.artifactId("UniversalScheduler")
+				.version("0.1.6")
+				.relocate(schedulerrelocation)
+				.build();
 
 		bukkitLibraryManager.loadLibrary(yaml);
+		bukkitLibraryManager.loadLibrary(scheduler);
 	}
 
 	private void checkSupportedVersion() {
@@ -139,10 +136,6 @@ public class Knockbackinator extends JavaPlugin {
 				&& !getServer().getPluginManager().isPluginEnabled("OldCombatMechanics")) {
 			getLogger().warning("Your server version may not support the pvp maccanics of 1.8. " +
 					"To solve this, install a plugin to fix the pvp cooldown like OldCombatMechanics.");
-		}
-
-		if (isFolia()) {
-			getLogger().warning("Support for Folia has not been tested and is only for experimental purposes.");
 		}
 	}
 
@@ -187,32 +180,7 @@ public class Knockbackinator extends JavaPlugin {
 			}
 		}
 
-		if (isFolia()) {
-			runFoliaStartupTask(player);
-			return;
-		}
-
-		instance.getServer().getScheduler().runTaskLater(instance, () -> player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick()), (long) SpigotConfig.DELAY.get(Integer.class));
-	}
-
-	private void runFoliaStartupTask(Player player) {
-		ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
-		Runnable myTask = () -> {
-			player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick());
-			scheduler.shutdown();
-		};
-
-		scheduler.schedule(myTask, Math.floorDiv(SpigotConfig.DELAY.get(Integer.class), 20), TimeUnit.SECONDS);
-	}
-
-	public static boolean isFolia() {
-		try {
-			Class.forName("io.papermc.paper.threadedregions.RegionizedServerInitEvent");
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
-		return true;
+		scheduler.runTaskLater(() -> player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick()), (long) SpigotConfig.DELAY.get(Integer.class));
 	}
 
 	public YamlFile getConfigTextFile() {
@@ -229,11 +197,6 @@ public class Knockbackinator extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-
-		if (isFolia()) {
-			FoliaTask.stopTask();
-		}
-
 		getLogger().info("Clearing instances...");
 		instance = null;
 		getLogger().info("Plugin successfully disabled!");

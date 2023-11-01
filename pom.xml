@@ -6,7 +6,7 @@
 
     <groupId>it.frafol</groupId>
     <artifactId>knockbackinator</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <packaging>jar</packaging>
 
     <name>Knockbackinator</name>
@@ -87,6 +87,12 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.13.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Anon8281</groupId>
+            <artifactId>UniversalScheduler</artifactId>
+            <version>0.1.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

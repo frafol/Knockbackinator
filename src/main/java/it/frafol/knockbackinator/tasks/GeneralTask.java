@@ -2,18 +2,19 @@ package it.frafol.knockbackinator.tasks;
 
 import it.frafol.knockbackinator.Knockbackinator;
 import it.frafol.knockbackinator.objects.PlayerCache;
-import org.bukkit.entity.Player;
 
 public class GeneralTask implements Runnable {
+
+    private final Knockbackinator plugin = Knockbackinator.getInstance();
 
     @Override
     public void run() {
 
-        if (Knockbackinator.getInstance().getServer().getOnlinePlayers() == null) {
+        if (plugin.getServer().getOnlinePlayers().isEmpty()) {
             return;
         }
 
-        for (Player players : Knockbackinator.getInstance().getServer().getOnlinePlayers()) {
+        plugin.getServer().getOnlinePlayers().forEach(players -> {
 
             if (PlayerCache.getFall_time().get(players) == null) {
                 return;
@@ -25,6 +26,6 @@ public class GeneralTask implements Runnable {
             }
 
             PlayerCache.getFall_time().put(players, PlayerCache.getFall_time().get(players) - 1);
-        }
+        });
     }
 }

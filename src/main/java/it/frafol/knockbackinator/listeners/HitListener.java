@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class HitListener implements Listener {
 
-    private Knockbackinator instance = Knockbackinator.getInstance();
+    private final Knockbackinator instance = Knockbackinator.getInstance();
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {

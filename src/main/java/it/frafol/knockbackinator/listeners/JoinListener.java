@@ -9,14 +9,16 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinListener implements Listener {
 
+    private final Knockbackinator plugin = Knockbackinator.getInstance();
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
 
         Player player = event.getPlayer();
-        Knockbackinator.getInstance().startupPlayer(player);
+        plugin.startupPlayer(player);
 
         if (player.hasPermission(SpigotConfig.RELOAD_PERMISSION.get(String.class))) {
-            Knockbackinator.getInstance().UpdateChecker(player);
+            plugin.UpdateChecker(player);
         }
     }
 }

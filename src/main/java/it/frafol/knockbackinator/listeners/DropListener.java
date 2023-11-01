@@ -11,6 +11,8 @@ import java.util.Objects;
 
 public class DropListener implements Listener {
 
+    private final Knockbackinator plugin = Knockbackinator.getInstance();
+
     @EventHandler
     public void onPlayerDrop(PlayerDropItemEvent event) {
 
@@ -20,7 +22,7 @@ public class DropListener implements Listener {
             return;
         }
 
-        if (!Objects.equals(dropped.getItemMeta().toString(), Knockbackinator.getInstance().getStick().getItemMeta().toString())) {
+        if (!Objects.equals(dropped.getItemMeta().toString(), String.valueOf(plugin.getStick().getItemMeta()))) {
             return;
         }
 
