@@ -1,7 +1,6 @@
 package it.frafol.knockbackinator;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
-import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import it.frafol.knockbackinator.commands.MainCommand;
 import it.frafol.knockbackinator.enums.SpigotConfig;
@@ -31,8 +30,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 
 public class Knockbackinator extends JavaPlugin {
-
-	private final TaskScheduler scheduler = UniversalScheduler.getScheduler(this);
 
 	private TextFile configTextFile;
 	private TextFile messagesTextFile;
@@ -69,7 +66,7 @@ public class Knockbackinator extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new LeaveListener(), this);
 
 		getLogger().info("Loading tasks...");
-		scheduler.runTaskTimer(new GeneralTask(), 20L, 20L);
+		UniversalScheduler.getScheduler(this).runTaskTimer(new GeneralTask(), 20L, 20L);
 
 		if (SpigotConfig.STATS.get(Boolean.class)) {
 			new Metrics(this, 18641);
@@ -105,6 +102,15 @@ public class Knockbackinator extends JavaPlugin {
 				.relocate(yamlrelocation)
 				.build();
 
+		final Relocation updaterelocation = new Relocation("yaml", "it{}frafol{}libs{}updater");
+		Library updater = Library.builder()
+				.groupId("com{}tchristofferson")
+				.artifactId("ConfigUpdater")
+				.version("2.1-SNAPSHOT")
+				.url("https://github.com/frafol/Config-Updater/releases/download/compile/ConfigUpdater-2.1-SNAPSHOT.jar")
+				.relocate(updaterelocation)
+				.build();
+
 		final Relocation schedulerrelocation = new Relocation("scheduler", "it{}frafol{}libs{}scheduler");
 		Library scheduler = Library.builder()
 				.groupId("com{}github{}Anon8281")
@@ -115,6 +121,7 @@ public class Knockbackinator extends JavaPlugin {
 
 		bukkitLibraryManager.loadLibrary(yaml);
 		bukkitLibraryManager.loadLibrary(scheduler);
+		bukkitLibraryManager.loadLibrary(updater);
 	}
 
 	private void checkSupportedVersion() {
@@ -180,7 +187,7 @@ public class Knockbackinator extends JavaPlugin {
 			}
 		}
 
-		scheduler.runTaskLater(() -> player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick()), (long) SpigotConfig.DELAY.get(Integer.class));
+		UniversalScheduler.getScheduler(this).runTaskLater(() -> player.getInventory().setItem(SpigotConfig.SLOT.get(Integer.class), Knockbackinator.getInstance().getStick()), (long) SpigotConfig.DELAY.get(Integer.class));
 	}
 
 	public YamlFile getConfigTextFile() {
