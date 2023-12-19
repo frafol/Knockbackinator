@@ -22,6 +22,7 @@ public enum SpigotConfig {
     AUTO_UPDATE("settings.auto_update"),
     PREVENT_PVP("settings.prevent_other_item_pvp"),
     PREVENT_DAMAGE("settings.prevent_taking_damage"),
+    REMOVE_EFFECTS("settings.remove_all_effects"),
     HIT_DELAY("settings.knockback.hit_delay"),
     X("settings.knockback.x_increment"),
     Y("settings.knockback.y_increment"),

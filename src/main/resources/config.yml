@@ -23,6 +23,9 @@ settings:
   # Activate it if you want the player not to take damage with the Knockbackinator.
   prevent_taking_damage: true
 
+  # Activate it if you want the effects of the player who's taking the Knockbackinator to be removed.
+  remove_all_effects: true
+
   # Knockbackinator's knockback settings.
   knockback:
 
