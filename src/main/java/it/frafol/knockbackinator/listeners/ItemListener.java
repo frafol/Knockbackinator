@@ -25,7 +25,7 @@ public class ItemListener implements Listener {
         Player player = event.getPlayer();
 
         if (player.getInventory().getItem(event.getPreviousSlot()) != null && player.getInventory().getItem(event.getPreviousSlot()).equals(instance.getStick())) {
-            if (SpigotConfig.REMOVE_EFFECTS.get(Boolean.class)) {
+            if (SpigotConfig.REMOVE_EFFECTS.get(Boolean.class) && effects.get(player.getUniqueId()) != null) {
                 effects.get(player.getUniqueId()).forEach(player::addPotionEffect);
                 effects.remove(player.getUniqueId());
             }
