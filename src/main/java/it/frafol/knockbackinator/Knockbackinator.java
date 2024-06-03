@@ -15,7 +15,6 @@ import lombok.SneakyThrows;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.relocation.Relocation;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -125,23 +124,20 @@ public class Knockbackinator extends JavaPlugin {
 	}
 
 	private void checkSupportedVersion() {
-		getLogger().info("Server version: " + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + ".");
-		if (getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_6_R")
-				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_5_R")
-				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_4_R")
-				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_3_R")
-				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_2_R")
-				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_1_R")
-				|| getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_0_R")) {
+		getLogger().info("Server version: " + getServer().getBukkitVersion() + ".");
+		if (getServer().getBukkitVersion().startsWith("1.6.")
+				|| getServer().getBukkitVersion().startsWith("1.5.")
+				|| getServer().getBukkitVersion().startsWith("1.4.")
+				|| getServer().getBukkitVersion().startsWith("1.3.")) {
 			getLogger().severe("Support for your version was declined.");
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 
-		if (!getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_7_R")
-				&& !getServer().getClass().getPackage().getName().split("\\.")[3].contains("1_8_R")
+		if (!getServer().getBukkitVersion().startsWith("1.7.")
+				&& !getServer().getBukkitVersion().startsWith("1.8.")
 				&& !getServer().getPluginManager().isPluginEnabled("OldCombatMechanics")) {
-			getLogger().warning("Your server version may not support the pvp maccanics of 1.8. " +
+			getLogger().warning("Your server version may not support the PvP Mechanics of 1.8. " +
 					"To solve this, install a plugin to fix the pvp cooldown like OldCombatMechanics.");
 		}
 	}
