@@ -61,6 +61,7 @@ public class Knockbackinator extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new DropListener(), this);
 		getServer().getPluginManager().registerEvents(new HitListener(), this);
 		getServer().getPluginManager().registerEvents(new ItemListener(), this);
+        getServer().getPluginManager().registerEvents(new EffectListener(), this);
 		getServer().getPluginManager().registerEvents(new FallListener(), this);
 		getServer().getPluginManager().registerEvents(new LeaveListener(), this);
 

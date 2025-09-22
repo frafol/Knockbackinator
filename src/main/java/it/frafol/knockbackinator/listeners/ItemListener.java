@@ -1,5 +1,6 @@
 package it.frafol.knockbackinator.listeners;
 
+import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import it.frafol.knockbackinator.Knockbackinator;
 import it.frafol.knockbackinator.enums.SpigotConfig;
 import it.frafol.knockbackinator.enums.SpigotMessages;
@@ -26,8 +27,10 @@ public class ItemListener implements Listener {
 
         if (player.getInventory().getItem(event.getPreviousSlot()) != null && player.getInventory().getItem(event.getPreviousSlot()).equals(instance.getStick())) {
             if (SpigotConfig.REMOVE_EFFECTS.get(Boolean.class) && effects.get(player.getUniqueId()) != null) {
-                effects.get(player.getUniqueId()).forEach(player::addPotionEffect);
-                effects.remove(player.getUniqueId());
+                UniversalScheduler.getScheduler(instance).runTaskLater(() -> {
+                    effects.get(player.getUniqueId()).forEach(player::addPotionEffect);
+                    effects.remove(player.getUniqueId());
+                }, 5L);
             }
         }
 
