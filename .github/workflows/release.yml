@@ -1,0 +1,121 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Find JAR file
+        id: find_jar
+        run: |
+          JAR_FILE=$(find target -maxdepth 1 -name "*.jar" ! -name "original*.jar" | head -n 1)
+          echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-plugin-jar
+          path: ${{ env.JAR_FILE }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: my-plugin-jar
+          path: ./target
+
+      - name: Find JAR file in downloaded artifacts
+        id: find_downloaded_jar
+        run: |
+          JAR_FILE=$(find ./target -maxdepth 1 -name "*.jar" ! -name "original*.jar" | head -n 1)
+          echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
+
+      - name: Remove older releases
+        uses: dev-drprasad/delete-tag-and-release@v0.2.1
+        if: ${{ github.event_name == 'push' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          delete_release: true
+          tag_name: dev-build
+
+      - name: Find git version
+        id: git-version
+        run: echo "id=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: dev-build
+          release_name: Release ${{ steps.git-version.outputs.id }}
+          draft: false
+          prerelease: true
+
+      - name: Upload JAR to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.JAR_FILE }}
+          asset_name: Knockbackinator.jar
+          asset_content_type: application/java-archive
+
+      - name: Publish to Modrinth
+        uses: cloudnode-pro/modrinth-publish@v2
+        with:
+          token: ${{ secrets.MODRINTH_TOKEN }}
+          project: "3pWjCEXE"
+          version: ${{ steps.git-version.outputs.id }}
+          channel: alpha
+          name: "Release ${{ steps.git-version.outputs.id }}"
+          changelog: "Auto-generated release for commit ${{ steps.git-version.outputs.id }}"
+          files: ${{ env.JAR_FILE }}
+          loaders: |-
+            bukkit
+            paper
+            spigot
+            purpur
+            folia
+          game-versions: |-
+            1.8.x
+            1.9.x
+            1.10.x
+            1.11.x
+            1.12.x
+            1.13.x
+            1.14.x
+            1.15.x
+            1.16.x
+            1.17.x
+            1.18.x
+            1.19.x
+            1.20.x
+            1.21.x
