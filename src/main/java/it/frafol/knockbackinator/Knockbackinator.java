@@ -54,7 +54,9 @@ public class Knockbackinator extends JavaPlugin {
 		updateConfiguration();
 
 		getLogger().info("Loading commands...");
-		getServer().getPluginManager().registerEvents(new MainCommand(), this);
+		MainCommand mainCommand = new MainCommand();
+		getCommand("knockbackinator").setExecutor(mainCommand);
+		getCommand("knockbackinator").setTabCompleter(mainCommand);
 
 		getLogger().info("Loading events...");
 		getServer().getPluginManager().registerEvents(new JoinListener(), this);

@@ -5,3 +5,6 @@ authors: [ frafol ]
 api-version: 1.13
 folia-supported: true
 description: "Knockbackinator plugin."
+commands:
+  knockbackinator:
+    description: Main plugin command.

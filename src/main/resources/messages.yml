@@ -10,6 +10,7 @@ messages:
   reloaded: "%prefix% &7Configuration reloaded &dsuccessfully&7."
 
   target_offline: "%prefix% &7This player is not &donline&7."
+  given: "%prefix% &7Added the &dknockbackinator&7 to player's inventory."
 
   # Message that appears when the player picks up the Knockbackinator.
   # Leave "none" to disable this feature.
