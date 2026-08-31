@@ -8,6 +8,7 @@ public enum SpigotMessages {
     TAKEN("messages.taken"),
     USAGE("messages.usage"),
     NO_PERMISSION("messages.no_permission"),
+    TARGET_OFFLINE("messages.target_offline"),
     RELOADED("messages.reloaded");
 
     private final String path;

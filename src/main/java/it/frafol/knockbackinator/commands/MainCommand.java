@@ -1,8 +1,10 @@
 package it.frafol.knockbackinator.commands;
 
+import it.frafol.knockbackinator.Knockbackinator;
 import it.frafol.knockbackinator.enums.SpigotConfig;
 import it.frafol.knockbackinator.enums.SpigotMessages;
 import it.frafol.knockbackinator.objects.TextFile;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,6 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class MainCommand implements Listener {
+
+    private final Knockbackinator plugin = Knockbackinator.getInstance();
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCommand(PlayerCommandPreprocessEvent event) {
@@ -45,6 +49,33 @@ public class MainCommand implements Listener {
             if (player.hasPermission(SpigotConfig.RELOAD_PERMISSION.get(String.class))) {
                 TextFile.reloadAll();
                 player.sendMessage(SpigotMessages.RELOADED.color().replace("%prefix%", SpigotMessages.PREFIX.color()));
+                return;
+            }
+
+            if (SpigotConfig.CREDIT_LESS.get(Boolean.class)) {
+                player.sendMessage(SpigotMessages.NO_PERMISSION.color().replace("%prefix%", SpigotMessages.PREFIX.color()));
+                return;
+            }
+
+            player.sendMessage("§7This server is using §dKnockbackinator §7by §dfrafol§7.");
+        }
+
+        if (command.startsWith("/knockbackinator give ") || command.equals("/knockbackinator give")) {
+
+            event.setCancelled(true);
+
+            if (player.hasPermission(SpigotConfig.GIVE_PERMISSION.get(String.class))) {
+                String[] args = command.trim().split("\\s+");
+                if (args.length == 3) {
+                    Player target = Bukkit.getPlayer(args[2]);
+                    if (target == null || !target.isOnline()) {
+                        player.sendMessage(SpigotMessages.TARGET_OFFLINE.color().replace("%prefix%", SpigotMessages.PREFIX.color()));
+                        return;
+                    }
+                    plugin.startupPlayer(target);
+                    return;
+                }
+                plugin.startupPlayer(player);
                 return;
             }
 

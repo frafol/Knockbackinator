@@ -10,8 +10,10 @@ public enum SpigotConfig {
 
     PERMISSION("settings.usage_permission"),
     RELOAD_PERMISSION("settings.reload_permission"),
+    GIVE_PERMISSION("settings.give_permission"),
     CREDIT_LESS("settings.credit_less"),
     SLOT("settings.item.slot"),
+    GIVE_ON_JOIN("settings.item.give_on_join"),
     ITEM_NAME("settings.item.name"),
     DROP("settings.item.prevent_drop"),
     MOVE("settings.item.prevent_move"),

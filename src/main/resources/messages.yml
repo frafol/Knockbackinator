@@ -5,9 +5,11 @@ messages:
 
   prefix: "&d&lKNOCKBACKINATOR &7»"
 
-  usage: "%prefix% &7Use: &d/knockbackinator reload&7."
+  usage: "%prefix% &7Use: &d/knockbackinator reload/give&7."
   no_permission: "%prefix% &7You do not have the &dpermission &7to do this."
   reloaded: "%prefix% &7Configuration reloaded &dsuccessfully&7."
+
+  target_offline: "%prefix% &7This player is not &donline&7."
 
   # Message that appears when the player picks up the Knockbackinator.
   # Leave "none" to disable this feature.

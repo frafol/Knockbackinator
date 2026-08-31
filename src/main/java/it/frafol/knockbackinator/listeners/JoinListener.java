@@ -13,10 +13,8 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-
         Player player = event.getPlayer();
-        plugin.startupPlayer(player);
-
+        if (SpigotConfig.GIVE_ON_JOIN.get(Boolean.class)) plugin.startupPlayer(player);
         if (player.hasPermission(SpigotConfig.RELOAD_PERMISSION.get(String.class))) {
             plugin.UpdateChecker(player);
         }

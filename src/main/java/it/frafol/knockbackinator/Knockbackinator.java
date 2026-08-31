@@ -173,6 +173,7 @@ public class Knockbackinator extends JavaPlugin {
 
 	public void startupPlayer(Player player) {
 
+		PlayerCache.getDelays().remove(player);
 		PlayerCache.getDelays().put(player, player.getMaximumNoDamageTicks());
 		if (SpigotConfig.PERMISSION.get(String.class) != null && !player.hasPermission(SpigotConfig.PERMISSION.get(String.class))) {
 			return;

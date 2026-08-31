@@ -14,6 +14,9 @@ settings:
   # Use "" to disable this feature.
   usage_permission: "knockbinator.get"
 
+  # Knockbackinator's give permission.
+  give_permission: "knockbinator.give"
+
   # Knockbackinator's reload permission.
   reload_permission: "knockbinator.reload"
 
@@ -39,6 +42,8 @@ settings:
 
   # Knockbackinator's item settings.
   item:
+
+    give_on_join: true
 
     # Sets the give delay (in ticks).
     # Can be useful if in your server there is a plugin that clears the inventory on join.
